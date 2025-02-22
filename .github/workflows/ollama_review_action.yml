@@ -6,14 +6,40 @@ on:
 
 jobs:
   request-review:
-    runs-on: ubuntu-latest
+    runs-on: macOS
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run Ollama Code Review
-      uses: ./
+    - name: Setup Python
+      uses: actions/setup-python@v2
       with:
-        ollama_api_url: ${{ secrets.OLLAMA_API_URL }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Ollama Code Review
+      run: python src/ollama_review.py
+      env:
+        OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
+        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        USER_PROMPT: ''
+        RESPONSE_LANGUAGE: 'korean'
+        MODEL: 'deepseek-r1:8b'
+
+#    - name: Run Ollama Code Review
+#      uses: ./
+#      env:
+#        OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
+#        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+#        OWNER: ${{ github.repository_owner }}
+#        REPO: ${{ github.event.repository.name }}
+#        PR_NUMBER: ${{ github.event.pull_request.number }}
+#        USER_PROMPT: ''
+#        RESPONSE_LANGUAGE: 'korean'
+#        MODEL: 'deepseek-r1:8b'

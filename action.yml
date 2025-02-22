@@ -1,20 +1,8 @@
 name: 'Ollama Code Review'
 description: 'Request a code review from the Ollama server for a GitHub pull request.'
-inputs:
-  ollama_api_url:
-    description: 'The API URL for the Ollama server.'
-    required: true
-  github_token:
-    description: 'GitHub token for authentication.'
-    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.ollama_api_url }}
-    - ${{ inputs.github_token }}
-    - ${{ github.repository }}
-    - ${{ github.event.pull_request.number }}
 branding:
   icon: 'code-review'
   color: 'blue'
