@@ -1,0 +1,19 @@
+name: Ollama Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  request-review:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run Ollama Code Review
+      uses: ./
+      with:
+        ollama_api_url: ${{ secrets.OLLAMA_API_URL }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
