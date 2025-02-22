@@ -17,29 +17,14 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
     - name: Run Ollama Code Review
-      run: python src/ollama_review.py
-      env:
+      uses: ./
+      with:
         OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         OWNER: ${{ github.repository_owner }}
         REPO: ${{ github.event.repository.name }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-        USER_PROMPT: ''
-        RESPONSE_LANGUAGE: 'korean'
+        CUSTOM_PROMPT: ''
+        RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'deepseek-r1:8b'
-
-#    - name: Run Ollama Code Review
-#      uses: ./
-#      env:
-#        OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
-#        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-#        OWNER: ${{ github.repository_owner }}
-#        REPO: ${{ github.event.repository.name }}
-#        PR_NUMBER: ${{ github.event.pull_request.number }}
-#        USER_PROMPT: ''
-#        RESPONSE_LANGUAGE: 'korean'
-#        MODEL: 'deepseek-r1:8b'

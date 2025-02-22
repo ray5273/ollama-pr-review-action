@@ -47,7 +47,7 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
     }
 
     # Complete system prompt with response language
-    complete_system_prompt = f'{system_prompt}\nResponse Language: {response_language}'
+    complete_system_prompt = f'{system_prompt}\nYou must provide your review in {response_language}.'
 
     # Get the PR files
     pr_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files'

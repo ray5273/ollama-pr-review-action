@@ -1,8 +1,50 @@
 name: 'Ollama Code Review'
 description: 'Request a code review from the Ollama server for a GitHub pull request.'
+inputs:
+    OLLAMA_API_URL:
+        description: 'The URL of the Ollama API server.'
+        required: true
+        default: 'http://localhost:11434'
+    MY_GITHUB_TOKEN:
+        description: 'The GitHub token to use for making API requests.'
+        required: true
+    OWNER:
+        description: 'The owner of the repository.'
+        required: true
+    REPO:
+        description: 'The name of the repository.'
+        required: true
+    PR_NUMBER:
+        description: 'The number of the pull request.'
+        required: true
+    CUSTOM_PROMPT:
+        description: 'The custom prompt to use for the review.'
+        required: false
+        default: ''
+    RESPONSE_LANGUAGE:
+        description: 'The language to use for the response.'
+        required: false
+        default: 'English'
+    MODEL:
+        description: 'The model to use for the review.'
+        required: false
+        default: 'deepseek-r1:8b'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'composite'
+  steps:
+    - run: pip install -r ${{ github.action_path }}/requirements.txt
+      shell: bash
+    - run: python ${{ github.action_path }}/src/ollama_review.py
+      shell: bash
+      env:
+        OLLAMA_API_URL: ${{ inputs.OLLAMA_API_URL }}
+        MY_GITHUB_TOKEN: ${{ inputs.MY_GITHUB_TOKEN }}
+        OWNER: ${{ inputs.OWNER }}
+        REPO: ${{ inputs.REPO }}
+        PR_NUMBER: ${{ inputs.PR_NUMBER }}
+        CUSTOM_PROMPT: ${{ inputs.CUSTOM_PROMPT }}
+        RESPONSE_LANGUAGE: ${{ inputs.RESPONSE_LANGUAGE }}
+        MODEL: ${{ inputs.model }}
 branding:
   icon: 'code-review'
   color: 'blue'
