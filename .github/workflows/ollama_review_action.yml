@@ -28,3 +28,4 @@ jobs:
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'qwen2.5-coder:7b'
+        TRANSLATION_MODEL: 'exaone3.5:7.8b'
