@@ -48,7 +48,7 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
 
     # Complete system prompt with response language
     complete_system_prompt = f'{system_prompt}\nYou must provide your review in {response_language}.'
-
+    print("Complete System Prompt given to Ollama:", complete_system_prompt)
     # Get the PR files
     pr_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files'
     response = requests.get(pr_url, headers=headers)
@@ -69,7 +69,8 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
 
     # Create complete prompt using the global user_prompt
     complete_user_prompt = user_prompt + (custom_prompt or '') + "\n\nChanges:\n" + changes_str
-    
+    print("Complete User Prompt given to Ollama:", complete_user_prompt)
+
     # Request code review from Ollama
     review_request = {
         'model': model,  # You might want to make this configurable
