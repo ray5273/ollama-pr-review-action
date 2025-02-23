@@ -25,6 +25,6 @@ jobs:
         OWNER: ${{ github.repository_owner }}
         REPO: ${{ github.event.repository.name }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-        CUSTOM_PROMPT: '답변을 한글로 작성해주세요.'
+        CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'qwen2.5-coder:7b'
