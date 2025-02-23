@@ -10,6 +10,10 @@ Be specific in explaining how the changes shown in the diff differ from the exis
 """
 
 user_prompt = """
+You are an experienced software engineer and code review expert. 
+Please analyze the code diff for a given PR and provide a detailed assessment of the intent, improvements, potential bugs, and issues with performance, security, readability, and maintainability of the changed code. 
+Be specific in explaining how the changes shown in the diff differ from the existing code and why these changes are necessary.
+
 Below is the code diff submitted in the PR. Please write a review of the changes based on the diff content.
 - Evaluate the intention and logical flow of the modified sections.
 - Point out any areas that need improvement in terms of performance, security, and readability.
@@ -131,7 +135,7 @@ Review to translate:
         # Cleanup translation model
         cleanup_model(api_url, translation_model)
 
-def request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt=None, response_language="english"):
+def request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt=None):
     try:
         # Prepare review model
         prepare_model(api_url, model)
@@ -142,8 +146,8 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
         }
 
         # Complete system prompt with response language
-        complete_system_prompt = f'{system_prompt}\nYou must provide your review in {response_language}.'
-        print("Complete System Prompt given to Ollama:", complete_system_prompt)
+        # complete_system_prompt = f'{system_prompt}.'
+        # print("Complete System Prompt given to Ollama:", complete_system_prompt)
         # Get the PR files
         pr_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files'
         response = requests.get(pr_url, headers=headers)
@@ -169,7 +173,7 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
         # Request code review from Ollama
         review_request = {
             'model': model,  # You might want to make this configurable
-            'system': complete_system_prompt,
+            # 'system': complete_system_prompt,
             'prompt': complete_user_prompt,
             'stream': False,
         }
@@ -177,6 +181,7 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
         review_response = requests.post(f'{api_url}/api/generate', json=review_request)
         review_response.raise_for_status()
         review = review_response.json()
+        print("Review Response:", review)
         
         return review['response'] if 'response' in review else review
     finally:
@@ -207,13 +212,15 @@ if __name__ == "__main__":
     
     try:
         # Get review from Ollama
-        review = request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt, response_language)
-        
-        # Translate if needed
-        if response_language.lower() != "english":
-            print(f"Translating review to {response_language} using {translation_model}...")
-            review = translate_review(api_url, review, response_language, translation_model)
-            print("Translation completed.")
+        review = request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt)
+
+        print(f"Review generated: {review}")
+
+        # # Translate if needed
+        # if response_language.lower() != "english":
+        #     print(f"Translating review to {response_language} using {translation_model}...")
+        #     review = translate_review(api_url, review, response_language, translation_model)
+        #     print("Translation completed.")
         
         # Post review back to GitHub PR
         post_review_to_github(github_token, owner, repo, pr_number, review)
