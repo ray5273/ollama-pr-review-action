@@ -6,14 +6,25 @@ on:
 
 jobs:
   request-review:
-    runs-on: ubuntu-latest
+    runs-on: macOS
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
     - name: Run Ollama Code Review
       uses: ./
       with:
-        ollama_api_url: ${{ secrets.OLLAMA_API_URL }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
+        MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        CUSTOM_PROMPT: '답변을 한글로 작성해주세요.'
+        RESPONSE_LANGUAGE: 'Korean'
+        MODEL: 'qwen2.5-coder:7b'
