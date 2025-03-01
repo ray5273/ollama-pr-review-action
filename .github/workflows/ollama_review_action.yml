@@ -24,7 +24,7 @@ jobs:
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         OWNER: poseidonos
         REPO: pos-essential-orchestrator
-        PR_NUMBER: 768
+        PR_NUMBER: 825
         CUSTOM_PROMPT: 'especially recommend code location of logger.info(), logger.debug() code.'
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'deepseek-r1:70b'
