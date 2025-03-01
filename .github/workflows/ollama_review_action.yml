@@ -27,4 +27,4 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'qwen2.5-coder:32b'
+        MODEL: 'llama3.3'
