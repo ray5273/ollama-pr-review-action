@@ -6,7 +6,7 @@ on:
 
 jobs:
   request-review:
-    runs-on: macOS
+    runs-on: elice
 
     steps:
     - name: Checkout repository
@@ -22,9 +22,9 @@ jobs:
       with:
         OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        OWNER: ${{ github.repository_owner }}
-        REPO: ${{ github.event.repository.name }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        CUSTOM_PROMPT: '답변을 한글로 작성해주세요.'
+        OWNER: poseidonos
+        REPO: pos-essential-orchestrator
+        PR_NUMBER: 825
+        CUSTOM_PROMPT: 'Especially recommend code location of logger.info(), logger.debug() code, please specify filename and line number for each log statement.'
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'qwen2.5-coder:7b'
+        MODEL: 'codestral'

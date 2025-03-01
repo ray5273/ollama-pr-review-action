@@ -54,6 +54,8 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
     response = requests.get(pr_url, headers=headers)
     response.raise_for_status()
     files = response.json()
+
+    print("Number of files in PR:", len(files))
     
     # Collect all changed code
     changes = []
@@ -105,7 +107,7 @@ if __name__ == "__main__":
     print(f"Custom Prompt: {custom_prompt}")
     print(f"Response Language: {response_language}")
     print(f"Model: {model}")
-    
+
     # Get review from Ollama
     review = request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt, response_language)
     
