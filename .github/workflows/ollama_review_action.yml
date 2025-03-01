@@ -27,4 +27,4 @@ jobs:
         PR_NUMBER: 768
         CUSTOM_PROMPT: 'especially recommend code location of logger.info(), logger.debug() code.'
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'llama3.3'
+        MODEL: 'qwen2.5-coder:32b'
