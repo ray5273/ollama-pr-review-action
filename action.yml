@@ -29,6 +29,10 @@ inputs:
         description: 'The model to use for the review.'
         required: false
         default: 'deepseek-r1:8b'
+    TRANSLATION_MODEL:
+        description: 'The model to use for translation.'
+        required: false
+        default: 'exaone3.5:7.8b'
 runs:
   using: 'composite'
   steps:
@@ -45,6 +49,7 @@ runs:
         CUSTOM_PROMPT: ${{ inputs.CUSTOM_PROMPT }}
         RESPONSE_LANGUAGE: ${{ inputs.RESPONSE_LANGUAGE }}
         MODEL: ${{ inputs.model }}
+        TRANSLATION_MODEL: ${{ inputs.TRANSLATION_MODEL }}
 branding:
   icon: 'code-review'
   color: 'blue'
