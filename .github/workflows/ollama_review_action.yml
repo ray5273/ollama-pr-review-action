@@ -27,4 +27,4 @@ jobs:
         PR_NUMBER: 825
         CUSTOM_PROMPT: 'Especially recommend code location of logger.info(), logger.debug() code, please specify filename and line number for each log statement.'
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'deepseek-r1:70b'
+        MODEL: 'qwen2.5-coder:32b'
