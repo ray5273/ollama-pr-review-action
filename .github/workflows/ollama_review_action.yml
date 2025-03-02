@@ -6,7 +6,7 @@ on:
 
 jobs:
   request-review:
-    runs-on: macOS
+    runs-on: elice
 
     steps:
     - name: Checkout repository
@@ -27,5 +27,5 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'qwen2.5-coder:7b'
-        TRANSLATION_MODEL: 'exaone3.5:7.8b'
+        MODEL: 'qwen2.5-coder:32b'
+        TRANSLATION_MODEL: 'exaone3.5:32b'
