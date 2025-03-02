@@ -26,5 +26,5 @@ jobs:
         REPO: pos-essential-orchestrator
         PR_NUMBER: 744
         CUSTOM_PROMPT: 'Especially recommend code location of logger.info(), logger.debug() code, please specify filename and line number for each log statement.'
-        RESPONSE_LANGUAGE: 'Korean'
+        RESPONSE_LANGUAGE: '한국어'
         MODEL: 'qwen2.5-coder:32b'
