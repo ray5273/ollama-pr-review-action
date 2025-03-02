@@ -72,7 +72,7 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
     changes_str = json.dumps(changes, indent=2, ensure_ascii=False)
 
     # Create complete prompt using the global user_prompt
-    complete_user_prompt = user_prompt + (custom_prompt or '') + "\n\nChanges:\n" + changes_str
+    complete_user_prompt = user_prompt + (custom_prompt or '') + f"\nYou must provide your review in {response_language} \nChanges:\n" + changes_str
     print("Complete User Prompt given to Ollama:", complete_user_prompt)
 
     # Request code review from Ollama
