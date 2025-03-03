@@ -7,7 +7,6 @@ This GitHub Action uses Ollama to automatically perform code reviews on pull req
 - Automated code review using Ollama models
 - Support for multiple programming languages
 - Multilingual review output with translation support
-- File-by-file detailed review comments
 - Risk score assessment (1-5 scale)
 - Maintains technical terms in English during translation
 
@@ -177,6 +176,9 @@ pip install -r requirements.txt
 ```bash
 python src/ollama_review.py
 ```
+
+## Future Improvements
+- File-by-file detailed review comments
 
 ## Contributing
 
