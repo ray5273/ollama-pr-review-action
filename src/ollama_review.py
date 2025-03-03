@@ -2,6 +2,7 @@ import requests
 import os
 import json
 import time
+from review import CodeReviewResponse, generate_review_response
 
 system_prompt = """
 You are an expert developer, your task is to review a set of pull requests.
@@ -25,7 +26,6 @@ Respond in valid json making sure that all special characters are escaped proper
 """
 
 user_prompt = """
-Please add logger.info() and logger.debug() to the code.
 """
 
 def post_review_to_github(github_token, owner, repo, pr_number, review_body):
@@ -183,14 +183,21 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
             'system': complete_system_prompt,
             'prompt': complete_user_prompt,
             'stream': False,
+            'format': CodeReviewResponse.model_json_schema()
         }
-    
+
         review_response = requests.post(f'{api_url}/api/generate', json=review_request)
         review_response.raise_for_status()
-        review = review_response.json()
-        print("Review Response:", review)
-        
-        return review['response'] if 'response' in review else review
+        review_json = review_response.json()
+
+        # Parse structured response
+        review_content = review_json['response'] if 'response' in review_json else review_json
+        review_data = CodeReviewResponse.model_validate_json(review_content)
+
+        # Format the review into Markdown
+        formatted_review = generate_review_response(review_data.reviews)
+
+        return formatted_review
     finally:
         # Cleanup review model
         cleanup_model(api_url, model)
