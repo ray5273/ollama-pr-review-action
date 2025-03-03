@@ -12,6 +12,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Ollama Server
+      uses: ai-action/setup-ollama@v1
+
+    - name: Serve Ollama
+      run: |
+        ollama serve &
+
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
