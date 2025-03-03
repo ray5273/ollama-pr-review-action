@@ -16,6 +16,7 @@ jobs:
       uses: ai-action/setup-ollama@v1
 
     - name: Serve Ollama
+      continue-on-error: true
       run: |
         ollama serve &
 
@@ -29,10 +30,10 @@ jobs:
       with:
         OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        OWNER: ${{ github.repository_owner }}
-        REPO: ${{ github.event.repository.name }}
-        PR_NUMBER: ${{ github.event.pull_request.number }}
+        OWNER: poseidonos
+        REPO: pos-essential-orchestrator
+        PR_NUMBER: 825
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'qwen2.5-coder:32b'
+        MODEL: 'llama3.3'
         TRANSLATION_MODEL: 'exaone3.5:32b'

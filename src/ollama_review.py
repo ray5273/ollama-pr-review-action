@@ -120,6 +120,19 @@ def translate_review(api_url, review_text, target_language, translation_model):
         translation_prompt = f"""
 Please translate the following code review into {target_language}. 
 Maintain the technical terminology in English where appropriate.
+Well-known terms can be left untranslated
+- Mocking
+- API
+- Database
+- Cache
+- Error handling
+- Unit test
+- Integration test
+- System test
+- etc.
+
+You must not add or remove any information from the review.
+Just translate the text as accurately as possible.
 
 Review to translate:
 {review_text}
