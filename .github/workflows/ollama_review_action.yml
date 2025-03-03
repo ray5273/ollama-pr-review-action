@@ -16,6 +16,7 @@ jobs:
       uses: ai-action/setup-ollama@v1
 
     - name: Serve Ollama
+      continue-on-error: true
       run: |
         ollama serve &
 
@@ -34,5 +35,5 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'qwen2.5-coder:32b'
+        MODEL: 'llama3.3'
         TRANSLATION_MODEL: 'exaone3.5:32b'
