@@ -215,9 +215,9 @@ if __name__ == "__main__":
     repo = os.getenv('REPO')
     pr_number = os.getenv('PR_NUMBER')
     custom_prompt = os.getenv('CUSTOM_PROMPT')
-    response_language = os.getenv('RESPONSE_LANGUAGE')
-    model = os.getenv('MODEL')
-    translation_model = os.getenv('TRANSLATION_MODEL', 'exaone3.5:7.8b')  # Add translation model
+    response_language = os.getenv('RESPONSE_LANGUAGE', 'english')
+    model = os.getenv('MODEL', 'qwen2.5-coder:32b')
+    translation_model = os.getenv('TRANSLATION_MODEL', 'exaone3.5:32b')  # Add translation model
 
     print(f"API URL: {api_url}")
     print(f"GitHub Token: {github_token}")
