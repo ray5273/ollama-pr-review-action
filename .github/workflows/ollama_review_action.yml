@@ -35,5 +35,5 @@ jobs:
         PR_NUMBER: 825
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'codestral'
+        MODEL: 'llama3.3'
         TRANSLATION_MODEL: 'exaone3.5:32b'
