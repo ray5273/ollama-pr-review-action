@@ -35,5 +35,5 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'codellama:70b'
+        MODEL: 'codestral'
         TRANSLATION_MODEL: 'exaone3.5:32b'
