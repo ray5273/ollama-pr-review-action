@@ -34,5 +34,5 @@ jobs:
         PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
-        MODEL: 'llama3.3'
+        MODEL: 'deepseek-r1:70b'
         TRANSLATION_MODEL: 'exaone3.5:32b'
