@@ -28,6 +28,57 @@ Respond in valid json making sure that all special characters are escaped proper
 user_prompt = """
 """
 
+def post_file_review_to_github(github_token, owner, repo, pr_number, file_review):
+    """
+    Post a review comment to a specific file in GitHub PR.
+    :param github_token: GitHub token for authentication
+    :param owner: Repository owner
+    :param repo: Repository name
+    :param pr_number: PR number
+    :param file_review: FileReview object
+    :return: Response from GitHub API
+    """
+    headers = {
+        'Authorization': f'token {github_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+
+    # Create the review comment content
+    review_body = f"## Review for {file_review.filename}\n"
+    review_body += f"**Risk Score: {file_review.risk_score}/5**\n\n"
+
+    for feedback in file_review.feedback:
+        review_body += f"### {feedback.title}\n"
+        review_body += f"{feedback.details}\n\n"
+
+    # Get the commit ID from the file data
+    commit_id = file_review['commit_id']
+
+    # Use the file path from the file data
+    path = file_review['filename']
+
+    # Create review comment at the first line of the file
+    comment_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/comments'
+    comment_data = {
+        'body': review_body,
+        'commit_id': commit_id,
+        'path': path,
+        'line': 1,
+        'side': 'RIGHT'  # Comment on the right side (new version)
+    }
+
+    print(f"Posting review for file: {path}")
+    response = requests.post(comment_url, headers=headers, json=comment_data)
+
+    try:
+        response.raise_for_status()
+        print(f"Successfully posted review for {path}")
+        return response.json()
+    except Exception as e:
+        print(f"Error posting review for {path}: {str(e)}")
+        print(f"Response: {response.text}")
+        return None
+
 def post_review_to_github(github_token, owner, repo, pr_number, review_body):
     """
     Post a review comment to a GitHub PR.
@@ -142,6 +193,7 @@ Review to translate:
             'model': translation_model,
             'prompt': translation_prompt,
             'stream': False,
+            'format': CodeReviewResponse.model_json_schema()
         }
     
         translation_response = requests.post(f'{api_url}/api/generate', json=translation_request)
@@ -215,6 +267,81 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
         # Cleanup review model
         cleanup_model(api_url, model)
 
+def request_code_review_by_each_files(api_url, github_token, owner, repo, pr_number, model, custom_prompt=None):
+    try:
+        # Prepare review model
+        prepare_model(api_url, model)
+
+        headers = {
+            'Authorization': f'token {github_token}',
+            'Accept': 'application/vnd.github.v3+json'
+        }
+
+        # Complete system prompt with response language
+        complete_system_prompt = f'{system_prompt}.'
+        print("Complete System Prompt given to Ollama:", complete_system_prompt)
+
+        # Get the PR files
+        pr_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}/files'
+        response = requests.get(pr_url, headers=headers)
+        response.raise_for_status()
+        files = response.json()
+
+        # Get the PR details to access the latest commit SHA
+        pr_details_url = f'https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}'
+        pr_response = requests.get(pr_details_url, headers=headers)
+        pr_response.raise_for_status()
+        pr_data = pr_response.json()
+        latest_commit_sha = pr_data['head']['sha']
+
+        # Collect all changed code
+        all_file_reviews = []
+        for file in files:
+            changes = {
+                'filename': file['filename'],
+                'patch': file.get('patch', ''),
+                'status': file['status']
+            }
+
+            # Convert changes to a JSON-formatted string (using indent for readability)
+            changes_str = json.dumps(changes, indent=2, ensure_ascii=False)
+
+            # Create complete prompt using the global user_prompt
+            complete_user_prompt = user_prompt + (custom_prompt or '') + "\n\nChanges:\n" + changes_str
+            print(f"Reviewing file: {file['filename']}")
+
+            # Request code review from Ollama
+            review_request = {
+                'model': model,  # You might want to make this configurable
+                'system': complete_system_prompt,
+                'prompt': complete_user_prompt,
+                'stream': False,
+                'format': CodeReviewResponse.model_json_schema()
+            }
+
+            review_response = requests.post(f'{api_url}/api/generate', json=review_request)
+            review_response.raise_for_status()
+            review_json = review_response.json()
+
+            # Parse structured response
+            review_content = review_json['response'] if 'response' in review_json else review_json
+            review_data = CodeReviewResponse.model_validate_json(review_content)
+
+            # Format the review into Markdown
+            formatted_review = generate_review_response(review_data.reviews)
+
+            # Append the review to the list with necessary metadata
+            all_file_reviews.append({
+                'filename': file['filename'],
+                'commit_id': latest_commit_sha,
+                'review': formatted_review
+            })
+
+        return all_file_reviews
+    finally:
+        # Cleanup review model
+        cleanup_model(api_url, model)
+
 if __name__ == "__main__":
     # Get input arguments from environment variables
     api_url = os.getenv('OLLAMA_API_URL')
@@ -226,6 +353,7 @@ if __name__ == "__main__":
     response_language = os.getenv('RESPONSE_LANGUAGE')
     model = os.getenv('MODEL')
     translation_model = os.getenv('TRANSLATION_MODEL', 'exaone3.5:7.8b')  # Add translation model
+    response_each_files = os.getenv('RESPONSE_EACH_FILES', 'true')  # Add response_each_files
 
     print(f"API URL: {api_url}")
     print(f"GitHub Token: {github_token}")
@@ -236,21 +364,43 @@ if __name__ == "__main__":
     print(f"Response Language: {response_language}")
     print(f"Model: {model}")
     print(f"Translation Model: {translation_model}")
+    print(f"Response Each Files: {response_each_files}")
     
     try:
-        # Get review from Ollama
-        review = request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt)
+        if response_each_files.lower() == 'false':
+            # Get review from Ollama
+            review = request_code_review(api_url, github_token, owner, repo, pr_number, model, custom_prompt)
 
-        print(f"Review generated: {review}")
+            print(f"Review generated: {review}")
 
-        # Translate if needed
-        if response_language.lower() != "english":
-            print(f"Translating review to {response_language} using {translation_model}...")
-            review = translate_review(api_url, review, response_language, translation_model)
-            print("Translation completed.")
-        
-        # Post review back to GitHub PR
-        post_review_to_github(github_token, owner, repo, pr_number, review)
+            # Translate if needed
+            if response_language.lower() != "english":
+                print(f"Translating review to {response_language} using {translation_model}...")
+                review = translate_review(api_url, review, response_language, translation_model)
+                print("Translation completed.")
+
+            # Post review back to GitHub PR
+            post_review_to_github(github_token, owner, repo, pr_number, review)
+        else:
+            # Get review from Ollama for each file
+            reviews = request_code_review_by_each_files(api_url, github_token, owner, repo, pr_number, model, custom_prompt)
+
+            print(f"Reviews generated: {reviews}")
+
+            # Translate if needed
+            if response_language.lower() != "english":
+                print(f"Translating reviews to {response_language} using {translation_model}...")
+                translated_reviews = []
+                for review in reviews:
+                    translated_review = translate_review(api_url, review, response_language, translation_model)
+                    translated_reviews.append(translated_review)
+                print("Translation completed.")
+            else:
+                translated_reviews = reviews
+
+            # Post review back to GitHub PR for each file
+            for i, review in enumerate(translated_reviews):
+                post_file_review_to_github(github_token, owner, repo, pr_number, review)
         
     except Exception as e:
         print(f"Error during review process: {str(e)}")

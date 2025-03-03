@@ -30,9 +30,9 @@ jobs:
       with:
         OLLAMA_API_URL: ${{ secrets.OLLAMA_API_URL }}
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        OWNER: poseidonos
-        REPO: pos-essential-orchestrator
-        PR_NUMBER: 825
+        OWNER: ${{ github.repository_owner }}
+        REPO: ${{ github.event.repository.name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
         CUSTOM_PROMPT: ''
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'llama3.3'

@@ -11,6 +11,7 @@ class FileReview(BaseModel):
     filename: str
     risk_score: int  # 1-5 scale
     feedback: List[FeedbackItem]
+    commit_id: str
 
 
 class CodeReviewResponse(BaseModel):
