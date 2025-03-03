@@ -26,7 +26,6 @@ Respond in valid json making sure that all special characters are escaped proper
 """
 
 user_prompt = """
-Please add logger.info() and logger.debug() to the code.
 """
 
 def post_review_to_github(github_token, owner, repo, pr_number, review_body):
@@ -190,7 +189,6 @@ def request_code_review(api_url, github_token, owner, repo, pr_number, model, cu
         review_response = requests.post(f'{api_url}/api/generate', json=review_request)
         review_response.raise_for_status()
         review_json = review_response.json()
-        print("Review Response:", review_json)
 
         # Parse structured response
         review_content = review_json['response'] if 'response' in review_json else review_json
