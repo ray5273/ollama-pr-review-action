@@ -1,12 +1,13 @@
 name: Ollama Code Review
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
   request-review:
-    runs-on: elice
+    runs-on: [self-hosted, gpu]
 
     steps:
     - name: Checkout repository
@@ -36,3 +37,4 @@ jobs:
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'qwen2.5-coder:32b'
         TRANSLATION_MODEL: 'exaone3.5:32b'
+
