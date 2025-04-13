@@ -7,7 +7,7 @@ on:
 
 jobs:
   request-review:
-    runs-on: [self-hosted, gpu]
+    runs-on: [self-hosted]
 
     steps:
     - name: Checkout repository
