@@ -37,4 +37,3 @@ jobs:
         RESPONSE_LANGUAGE: 'Korean'
         MODEL: 'qwen2.5-coder:32b'
         TRANSLATION_MODEL: 'exaone3.5:32b'
-
