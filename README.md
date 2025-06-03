@@ -40,7 +40,7 @@ This action uses two types of models:
 
 This action requires significant computational resources due to the large model sizes:
 
-- **Recommend Requirements**: NVIDIA GPU with 40GB+ VRAM (for 70b and 4-bit quantization models)
+- **Recommended Requirements**: NVIDIA GPU with 40GB+ VRAM (for 70b and 4-bit quantization models)
   - Required for running large alternative models (llama3.3:70b, deepseek-r1:70b)
   - Combined model size requires approximately 35-40GB VRAM 
   - Recommended AWS Instance: g6e.xlarge (48GB GPU memory)
