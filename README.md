@@ -149,6 +149,7 @@ jobs:
 - `RESPONSE_LANGUAGE`: Target language for the review output
 - `MODEL`: Ollama model for code review
 - `TRANSLATION_MODEL`: Model for translating reviews
+- `GITHUB_API_BASE_URL`: API for GHE/Gitea
 
 ## Security
 
